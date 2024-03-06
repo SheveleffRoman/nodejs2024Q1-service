@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { v4 as uuid } from 'uuid';
 import { DbService } from 'src/database/db-service';
-import { User, UserArrayResponseDto } from './entities/user.entity';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -24,7 +24,7 @@ export class UserService {
   findAll() {
     const users = this.dbService.getAllUsers();
     const usersWithoutPassword = users.map((user) => new User(user));
-    return Array(new UserArrayResponseDto(usersWithoutPassword));
+    return usersWithoutPassword;
   }
 
   async findOne(id: string) {
@@ -37,7 +37,7 @@ export class UserService {
   async update(id: string, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(id);
 
-    if(!updateUserDto) {
+    if (!updateUserDto) {
       throw new HttpException('Invalid dto format', HttpStatus.BAD_REQUEST);
     }
 
@@ -60,7 +60,7 @@ export class UserService {
   async remove(id: string) {
     const user = await this.findOne(id);
     if (!user)
-    throw new HttpException("User doesn't exist", HttpStatus.NOT_FOUND);
+      throw new HttpException("User doesn't exist", HttpStatus.NOT_FOUND);
     this.dbService.deleteUser(user.id);
     return user;
   }

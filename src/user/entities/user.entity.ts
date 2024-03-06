@@ -14,11 +14,3 @@ export class User {
     Object.assign(this, partial);
   }
 }
-
-export class UserArrayResponseDto {
-  users: User[];
-
-  constructor(users: User[]) {
-    this.users = users;
-  }
-}
