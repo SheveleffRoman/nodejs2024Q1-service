@@ -15,25 +15,43 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { User } from './entities/user.entity';
 
+@ApiTags('user')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Post()
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'create user',
+    type: User,
+  })
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'get all users',
+    type: [User],
+  })
   findAll() {
     return this.userService.findAll();
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'get user by id',
+    type: User,
+  })
   findOne(
     @Param(
       'id',
@@ -49,6 +67,11 @@ export class UserController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Put(':id')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'update user',
+    type: User,
+  })
   update(
     @Param(
       'id',
@@ -64,7 +87,12 @@ export class UserController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'delete user',
+    type: null,
+  })
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(
     @Param(
       'id',
