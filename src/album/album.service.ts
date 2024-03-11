@@ -1,7 +1,6 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { DbService } from 'src/database/db-service';
-import { Album } from './entities/album.entity';
+import { DbService } from 'src/database/db.service';
 import { v4 as uuid } from 'uuid';
 import { CreateAlbumDto } from './dto/create-album.dto';
 
@@ -10,11 +9,11 @@ export class AlbumService {
   constructor(private readonly dbService: DbService) {}
 
   create(createAlbumDto: CreateAlbumDto) {
-    const album: Album = {
-      id: uuid(),
+    const newAlbum = {
       ...createAlbumDto,
+      id: uuid(),
     };
-    const newAlbum = this.dbService.addAlbum(album);
+    this.dbService.addAlbum(newAlbum);
     return newAlbum;
   }
 
@@ -22,22 +21,14 @@ export class AlbumService {
     return this.dbService.getAllAlbums();
   }
 
-  findOne(id: string) {
-    const album = this.dbService.getAlbumById(id);
-    if (!album)
-      throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
+  async findOne(id: string) {
+    const album = await this.dbService.getAlbumById(id);
+    if (!album) throw new NotFoundException();
     return album;
   }
 
-  update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    const album = this.findOne(id);
-    if (!album)
-      throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
-
-    if (!updateAlbumDto) {
-      throw new HttpException('Invalid dto format', HttpStatus.BAD_REQUEST);
-    }
-
+  async update(id: string, updateAlbumDto: UpdateAlbumDto) {
+    const album = await this.findOne(id);
     const updatedAlbum = {
       ...album,
       ...updateAlbumDto,
@@ -46,23 +37,17 @@ export class AlbumService {
     return updatedAlbum;
   }
 
-  remove(id: string) {
-    const album = this.findOne(id);
-    if (!album) {
-      throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
-    }
-
+  async remove(id: string) {
+    const album = await this.findOne(id);
     this.dbService.deleteAlbum(id);
 
-    const tracks = this.dbService.getAllTracks();
-    const filtered = tracks.filter((track) => track.albumId === id);
-    filtered.forEach((track) => {
-      this.dbService.updateTrack({ ...track, albumId: null });
-    });
+    const tracks = await this.dbService.getAllTracks();
+    const correspondingTracks = tracks.filter((track) => track.albumId === id);
+    correspondingTracks.map((tracks) =>
+      this.dbService.updateTrack({ ...tracks, albumId: null }),
+    );
 
-    if (this.dbService.isAlbumInFavorites(album.id) === true) {
-      this.dbService.deleteAlbumFromFavorites(album.id);
-    }
+    this.dbService.deleteAlbumFromFavorites(id);
 
     return album;
   }
