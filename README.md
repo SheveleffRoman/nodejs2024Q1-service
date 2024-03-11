@@ -8,13 +8,25 @@
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone https://github.com/SheveleffRoman/nodejs2024Q1-service
+```
+
+## Switch branch
+
+```
+git checkout develop_sprint_1
 ```
 
 ## Installing NPM modules
 
 ```
 npm install
+```
+
+## ENV
+
+```
+rename .env.example to .env
 ```
 
 ## Running application
@@ -25,13 +37,13 @@ npm start
 
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 ## Testing
 
 After application running open new terminal and enter:
 
 To run all tests without authorization
+change script "test" to "jest --testPathIgnorePatterns /auth refresh.e2e.spec.ts --noStackTrace --runInBand"
 
 ```
 npm run test
@@ -64,9 +76,3 @@ npm run lint
 ```
 npm run format
 ```
-
-### Debugging in VSCode
-
-Press <kbd>F5</kbd> to debug.
-
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
