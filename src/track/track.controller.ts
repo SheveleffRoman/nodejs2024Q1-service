@@ -10,25 +10,43 @@ import {
   ParseUUIDPipe,
   HttpStatus,
 } from '@nestjs/common';
-import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
+import { TrackService } from './track.service';
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Track } from './entities/track.entity';
 
+@ApiTags('track')
 @Controller('track')
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 
   @Post()
+  @ApiResponse({
+    status: 201,
+    description: 'create track',
+    type: Track,
+  })
   create(@Body() createTrackDto: CreateTrackDto) {
     return this.trackService.create(createTrackDto);
   }
 
   @Get()
+  @ApiResponse({
+    status: 200,
+    description: 'get all tracks',
+    type: [Track],
+  })
   findAll() {
     return this.trackService.findAll();
   }
 
   @Get(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'get track by id',
+    type: Track,
+  })
   findOne(
     @Param(
       'id',
@@ -43,6 +61,11 @@ export class TrackController {
   }
 
   @Put(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'update track',
+    type: Track,
+  })
   update(
     @Param(
       'id',
@@ -58,6 +81,11 @@ export class TrackController {
   }
 
   @Delete(':id')
+  @ApiResponse({
+    status: 204,
+    description: 'delete track',
+    type: null,
+  })
   @HttpCode(204)
   remove(
     @Param(

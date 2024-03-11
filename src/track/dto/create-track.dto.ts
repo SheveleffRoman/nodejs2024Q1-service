@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
   IsString,
@@ -7,18 +8,22 @@ import {
 } from 'class-validator';
 
 export class CreateTrackDto {
+  @ApiProperty()
   @IsNotEmpty()
   @IsString()
   name: string;
 
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsUUID('4', { message: 'Invalid UUID format for artistId' })
-  artistId: string;
+  artistId?: string;
 
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsUUID('4', { message: 'Invalid UUID format for albumId' })
-  albumId: string;
+  albumId?: string;
 
+  @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
   duration: number;
