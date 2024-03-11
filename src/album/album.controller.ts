@@ -13,22 +13,40 @@ import {
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Album } from './entities/album.entity';
 
+@ApiTags('album')
 @Controller('album')
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
   @Post()
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'create album',
+    type: Album,
+  })
   create(@Body() createAlbumDto: CreateAlbumDto) {
     return this.albumService.create(createAlbumDto);
   }
 
   @Get()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'get all albums',
+    type: [Album],
+  })
   findAll() {
     return this.albumService.findAll();
   }
 
   @Get(':id')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'get album by id',
+    type: Album,
+  })
   findOne(
     @Param(
       'id',
@@ -43,6 +61,11 @@ export class AlbumController {
   }
 
   @Put(':id')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'update album',
+    type: Album,
+  })
   update(
     @Param(
       'id',
@@ -58,7 +81,12 @@ export class AlbumController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'delete album',
+    type: null,
+  })
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(
     @Param(
       'id',
