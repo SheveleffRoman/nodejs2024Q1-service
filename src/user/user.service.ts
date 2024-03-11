@@ -1,15 +1,20 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { v4 as uuid } from 'uuid';
-import { DbService } from 'src/database/db-service';
+import { DbService } from 'src/database/db.service';
 import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
   constructor(private dbService: DbService) {}
 
-  create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto) {
     const user: User = {
       ...createUserDto,
       id: uuid(),
@@ -17,20 +22,19 @@ export class UserService {
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
-    const newUser = this.dbService.addUser(user);
+    const newUser = await this.dbService.addUser(user);
     return new User(newUser);
   }
 
-  findAll() {
-    const users = this.dbService.getAllUsers();
+  async findAll() {
+    const users = await this.dbService.getAllUsers();
     const usersWithoutPassword = users.map((user) => new User(user));
     return usersWithoutPassword;
   }
 
   async findOne(id: string) {
-    const user = this.dbService.getUserById(id);
-    if (!user)
-      throw new HttpException("User doesn't exist", HttpStatus.NOT_FOUND);
+    const user = await this.dbService.getUserById(id);
+    if (!user) throw new NotFoundException();
     return new User(user);
   }
 
@@ -59,8 +63,7 @@ export class UserService {
 
   async remove(id: string) {
     const user = await this.findOne(id);
-    if (!user)
-      throw new HttpException("User doesn't exist", HttpStatus.NOT_FOUND);
+    if (!user) throw new NotFoundException();
     this.dbService.deleteUser(user.id);
     return user;
   }
