@@ -13,7 +13,7 @@ import {
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { TrackService } from './track.service';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Track } from './entities/track.entity';
 
 @ApiTags('track')
@@ -23,7 +23,7 @@ export class TrackController {
 
   @Post()
   @ApiResponse({
-    status: 201,
+    status: HttpStatus.CREATED,
     description: 'create track',
     type: Track,
   })
@@ -33,7 +33,7 @@ export class TrackController {
 
   @Get()
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     description: 'get all tracks',
     type: [Track],
   })
@@ -43,7 +43,7 @@ export class TrackController {
 
   @Get(':id')
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     description: 'get track by id',
     type: Track,
   })
@@ -62,7 +62,7 @@ export class TrackController {
 
   @Put(':id')
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     description: 'update track',
     type: Track,
   })
@@ -82,11 +82,11 @@ export class TrackController {
 
   @Delete(':id')
   @ApiResponse({
-    status: 204,
+    status: HttpStatus.NO_CONTENT,
     description: 'delete track',
     type: null,
   })
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(
     @Param(
       'id',
