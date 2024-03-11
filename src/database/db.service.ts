@@ -56,7 +56,7 @@ export class DbService {
   }
 
   async updateTrack(dto: Partial<Track>) {
-    this.db.tracks.map((track) =>
+    this.db.tracks = this.db.tracks.map((track) =>
       track.id === dto.id ? { ...track, ...dto } : track,
     );
     return dto;
