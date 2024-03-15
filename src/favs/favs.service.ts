@@ -5,69 +5,134 @@ import { DbService } from 'src/database/db.service';
 export class FavsService {
   constructor(private dbService: DbService) {}
 
+  // immitation, remove later
+  async createFakeUser() {
+    const user = await this.dbService.user.findFirst();
+
+    if (user) {
+      return user;
+    }
+
+    return this.dbService.user.create({
+      data: {
+        login: 'fakeUser',
+        password: 'veryStrongPassword',
+        version: 1,
+        favAlbum: [],
+        favArtist: [],
+        favTrack: [],
+      },
+    });
+  }
+
   async findAll() {
-    const favorites = await this.dbService.getAllFavorites();
+    const user = await this.createFakeUser();
 
-    const tracks = await Promise.all(
-      favorites.tracks.map(async (id) => await this.dbService.getTrackById(id)),
-    ).then((result) => result.filter((el) => Boolean(el)));
+    const tracks = await this.dbService.track.findMany({
+      where: { id: { in: user.favTrack } },
+    });
 
-    const albums = await Promise.all(
-      favorites.albums.map(async (id) => await this.dbService.getAlbumById(id)),
-    ).then((result) => result.filter((el) => Boolean(el)));
+    const albums = await this.dbService.album.findMany({
+      where: { id: { in: user.favAlbum } },
+    });
 
-    const artists = await Promise.all(
-      favorites.artists.map(
-        async (id) => await this.dbService.getArtistById(id),
-      ),
-    ).then((result) => result.filter((el) => Boolean(el)));
+    const artists = await this.dbService.artist.findMany({
+      where: { id: { in: user.favArtist } },
+    });
 
-    return {
-      tracks,
-      albums,
-      artists,
-    };
+    return { tracks, albums, artists };
   }
 
   async addTrack(id: string) {
-    const track = await this.dbService.getTrackById(id);
-    if (track) {
-      this.dbService.addTrackToFavorites(id);
-      return this.dbService.getTrackById(id);
+    const user = await this.createFakeUser();
+
+    const track = await this.dbService.track.findUnique({
+      where: { id: id },
+    });
+
+    if (!track) {
+      throw new UnprocessableEntityException();
     }
-    throw new UnprocessableEntityException();
+
+    await this.dbService.user.update({
+      where: { id: user.id },
+      data: { favTrack: { push: track.id } },
+      select: {
+        favTrack: true,
+      },
+    });
+
+    return track;
   }
 
-  removeTrack(id: string) {
-    this.dbService.deleteTrackFromFavorites(id);
-    return 'Track removed';
+  async removeTrack(id: string) {
+    const user = await this.createFakeUser();
+    const favTrack = user.favTrack.filter((track) => track !== id);
+    return this.dbService.user.update({
+      where: { id: user.id },
+      data: { ...user, favTrack },
+    });
   }
 
   async addAlbum(id: string) {
-    const album = await this.dbService.getAlbumById(id);
-    if (album) {
-      this.dbService.addAlbumToFavorites(id);
-      return this.dbService.getAlbumById(id);
+    const user = await this.createFakeUser();
+
+    const album = await this.dbService.album.findUnique({
+      where: { id: id },
+    });
+
+    if (!album) {
+      throw new UnprocessableEntityException();
     }
-    throw new UnprocessableEntityException();
+
+    await this.dbService.user.update({
+      where: { id: user.id },
+      data: { favAlbum: { push: album.id } },
+      select: {
+        favAlbum: true,
+      },
+    });
+
+    return album;
   }
 
-  removeAlbum(id: string) {
-    this.dbService.deleteAlbumFromFavorites(id);
-    return 'Album removed';
+  async removeAlbum(id: string) {
+    const user = await this.createFakeUser();
+    const favAlbum = user.favAlbum.filter((album) => album !== id);
+    return this.dbService.user.update({
+      where: { id: user.id },
+      data: { ...user, favAlbum },
+    });
   }
 
   async addArtist(id: string) {
-    const artist = await this.dbService.getArtistById(id);
-    if (artist) {
-      this.dbService.addArtistToFavorites(id);
-      return this.dbService.getArtistById(id);
+    const user = await this.createFakeUser();
+
+    const artist = await this.dbService.artist.findUnique({
+      where: { id: id },
+    });
+
+    if (!artist) {
+      throw new UnprocessableEntityException();
     }
-    throw new UnprocessableEntityException();
+
+    await this.dbService.user.update({
+      where: { id: user.id },
+      data: { favArtist: { push: artist.id } },
+      select: {
+        favArtist: true,
+      },
+    });
+
+    return artist;
   }
 
-  removeArtist(id: string) {
-    this.dbService.deleteArtistFromFavorites(id);
-    return 'Artist removed';
+  async removeArtist(id: string) {
+    const user = await this.createFakeUser();
+    const favArtist = user.favArtist.filter((artist) => artist !== id);
+    return this.dbService.user.update({
+      where: { id: user.id },
+      data: { ...user, favArtist },
+    });
   }
 }
