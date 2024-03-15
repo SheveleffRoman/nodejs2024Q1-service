@@ -22,7 +22,7 @@ export class AlbumService {
     return this.dbService.album.create({ data: createAlbumDto });
   }
 
-  findAll() {
+  async findAll() {
     return this.dbService.album.findMany();
   }
 
