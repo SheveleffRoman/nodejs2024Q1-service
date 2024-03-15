@@ -12,6 +12,12 @@ export class User {
   createdAt: number;
   @ApiProperty()
   updatedAt: number;
+  @ApiProperty()
+  favArtist: string[];
+  @ApiProperty()
+  favAlbum: string[];
+  @ApiProperty()
+  favTrack: string[];
 
   @Exclude()
   password: string;
