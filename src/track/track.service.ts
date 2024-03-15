@@ -64,10 +64,8 @@ export class TrackService {
 
   async remove(id: string) {
     const track = await this.findOne(id);
-    this.dbService.track.delete({
+    return this.dbService.track.delete({
       where: { id: track.id },
     });
-
-    return track;
   }
 }

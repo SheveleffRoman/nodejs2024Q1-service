@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { DbService } from 'src/database/db.service';
-import { v4 as uuid } from 'uuid';
 import { CreateAlbumDto } from './dto/create-album.dto';
 
 @Injectable()
@@ -49,10 +48,8 @@ export class AlbumService {
 
   async remove(id: string) {
     const album = await this.findOne(id);
-    this.dbService.album.delete({
+    return this.dbService.album.delete({
       where: { id: album.id },
     });
-
-    return album;
   }
 }

@@ -3,7 +3,6 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { DbService } from 'src/database/db.service';
 import { Artist } from './entities/artist.entity';
-import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class ArtistService {
@@ -45,10 +44,8 @@ export class ArtistService {
 
   async remove(id: string) {
     const artist = await this.findOne(id);
-    this.dbService.artist.delete({
+    return this.dbService.artist.delete({
       where: { id: artist.id },
     });
-
-    return artist;
   }
 }
