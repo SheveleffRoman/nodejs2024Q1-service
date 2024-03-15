@@ -8,46 +8,50 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 export class AlbumService {
   constructor(private readonly dbService: DbService) {}
 
-  create(createAlbumDto: CreateAlbumDto) {
-    const newAlbum = {
-      ...createAlbumDto,
-      id: uuid(),
-    };
-    this.dbService.addAlbum(newAlbum);
-    return newAlbum;
+  async create(createAlbumDto: CreateAlbumDto) {
+    const artist = createAlbumDto.artistId
+      ? await this.dbService.artist.findUnique({
+          where: { id: createAlbumDto.artistId },
+        })
+      : null;
+
+    if (!artist) {
+      delete createAlbumDto.artistId;
+    }
+
+    return this.dbService.album.create({ data: createAlbumDto });
   }
 
   findAll() {
-    return this.dbService.getAllAlbums();
+    return this.dbService.album.findMany();
   }
 
   async findOne(id: string) {
-    const album = await this.dbService.getAlbumById(id);
+    const album = await this.dbService.album.findUnique({
+      where: { id: id },
+    });
     if (!album) throw new NotFoundException();
     return album;
   }
 
   async update(id: string, updateAlbumDto: UpdateAlbumDto) {
     const album = await this.findOne(id);
-    const updatedAlbum = {
+    const updated = {
       ...album,
       ...updateAlbumDto,
     };
-    this.dbService.updateAlbum(updatedAlbum);
-    return updatedAlbum;
+
+    return this.dbService.album.update({
+      where: { id: album.id },
+      data: updated,
+    });
   }
 
   async remove(id: string) {
     const album = await this.findOne(id);
-    this.dbService.deleteAlbum(id);
-
-    const tracks = await this.dbService.getAllTracks();
-    const correspondingTracks = tracks.filter((track) => track.albumId === id);
-    correspondingTracks.map((tracks) =>
-      this.dbService.updateTrack({ ...tracks, albumId: null }),
-    );
-
-    this.dbService.deleteAlbumFromFavorites(id);
+    this.dbService.album.delete({
+      where: { id: album.id },
+    });
 
     return album;
   }
