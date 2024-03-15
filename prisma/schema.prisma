@@ -20,9 +20,9 @@ model User {
   version   Int
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
-  favArtist String[]
-  favAlbum  String[]
-  favTrack  String[]
+  favArtist String[] @default([])
+  favAlbum  String[] @default([])
+  favTrack  String[] @default([])
 }
 
 model Artist {
