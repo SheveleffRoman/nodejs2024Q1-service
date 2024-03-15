@@ -2,27 +2,44 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
-import { v4 as uuid } from 'uuid';
 import { DbService } from 'src/database/db.service';
 
 @Injectable()
 export class TrackService {
   constructor(private dbService: DbService) {}
 
-  create(createTrackDto: CreateTrackDto) {
-    const newTrack: Track = {
-      id: uuid(),
-      ...createTrackDto,
-    };
-    return this.dbService.addTrack(newTrack);
+  async create(createTrackDto: CreateTrackDto) {
+    const album = createTrackDto.albumId
+      ? await this.dbService.album.findUnique({
+          where: { id: createTrackDto.albumId },
+        })
+      : null;
+
+    if (!album) {
+      delete createTrackDto.albumId;
+    }
+
+    const artist = createTrackDto.artistId
+      ? await this.dbService.artist.findUnique({
+          where: { id: createTrackDto.artistId },
+        })
+      : null;
+
+    if (!artist) {
+      delete createTrackDto.artistId;
+    }
+
+    return this.dbService.track.create({ data: createTrackDto });
   }
 
-  findAll() {
-    return this.dbService.getAllTracks();
+  async findAll() {
+    return this.dbService.track.findMany();
   }
 
   async findOne(id: string) {
-    const track = await this.dbService.getTrackById(id);
+    const track = await this.dbService.track.findUnique({
+      where: { id: id },
+    });
 
     if (!track) throw new NotFoundException();
 
@@ -37,16 +54,19 @@ export class TrackService {
       ...updateTrackDto,
     };
 
-    this.dbService.updateTrack(updatedTrack);
+    this.dbService.track.update({
+      where: { id: updatedTrack.id },
+      data: updatedTrack,
+    });
 
     return updatedTrack;
   }
 
   async remove(id: string) {
     const track = await this.findOne(id);
-    this.dbService.deleteTrack(id);
-
-    this.dbService.deleteTrackFromFavorites(id);
+    this.dbService.track.delete({
+      where: { id: track.id },
+    });
 
     return track;
   }
