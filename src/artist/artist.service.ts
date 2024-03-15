@@ -9,21 +9,23 @@ import { v4 as uuid } from 'uuid';
 export class ArtistService {
   constructor(private dbService: DbService) {}
 
-  create(createArtistDto: CreateArtistDto) {
-    const newArtist: Artist = {
-      id: uuid(),
-      ...createArtistDto,
-    };
-    return this.dbService.addArtist(newArtist);
+  async create(createArtistDto: CreateArtistDto) {
+    return this.dbService.artist.create({ data: createArtistDto });
   }
 
   findAll() {
-    return this.dbService.getAllArtists();
+    return this.dbService.artist.findMany();
   }
 
   async findOne(id: string) {
-    const artist = await this.dbService.getArtistById(id);
-    if (!artist) throw new NotFoundException();
+    const artist = await this.dbService.artist.findUnique({
+      where: { id: id },
+    });
+
+    if (!artist) {
+      throw new NotFoundException();
+    }
+
     return artist;
   }
 
@@ -35,28 +37,17 @@ export class ArtistService {
       ...updateArtistDto,
     };
 
-    this.dbService.updateArtist(updatedArtist);
-
-    return updatedArtist;
+    return this.dbService.artist.update({
+      where: { id: updatedArtist.id },
+      data: updatedArtist,
+    });
   }
 
   async remove(id: string) {
     const artist = await this.findOne(id);
-    this.dbService.deleteArtist(id);
-
-    const tracks = await this.dbService.getAllTracks();
-    const correspondingTracks = tracks.filter((track) => track.artistId === id);
-    correspondingTracks.map((track) =>
-      this.dbService.updateTrack({ ...track, artistId: null }),
-    );
-
-    const albums = await this.dbService.getAllAlbums();
-    const correspondingAlbums = albums.filter((album) => album.artistId === id);
-    correspondingAlbums.map((album) =>
-      this.dbService.updateAlbum({ ...album, artistId: null }),
-    );
-
-    this.dbService.deleteArtistFromFavorites(id);
+    this.dbService.artist.delete({
+      where: { id: artist.id },
+    });
 
     return artist;
   }
