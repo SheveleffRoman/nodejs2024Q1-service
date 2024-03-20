@@ -38,7 +38,7 @@ run command in terminal
 ```
 docker compose --env-file .env -f docker-compose.yml up -d
 ```
-or right click in vs code on docker-compose.hub.yml file and `Compose Up`
+or download Docker extension for VS CODE and right click on docker-compose.hub.yml file and `Compose Up`
 
 ### Prod mode
 
@@ -47,7 +47,7 @@ run command in terminal
 ```
 docker compose --env-file .env -f docker-compose.prod.yml up -d
 ```
-or right click in vs code on docker-compose.prod.yml file and `Compose Up`
+or download Docker extension for VS CODE and right click on docker-compose.prod.yml file and `Compose Up`
 
 ### Dev mode
 
@@ -56,7 +56,7 @@ run command in terminal
 ```
 docker compose --env-file .env -f docker-compose.dev.yml up -d
 ```
-or right click in vs code on docker-compose.dev.yml file and `Compose Up`
+or download Docker extension for VS CODE and right click on docker-compose.dev.yml file and `Compose Up`
 
 and then manually type command
 
