@@ -1,7 +1,7 @@
 name: home-library-prod
 services:
   postgres-service:
-    container_name: postgres-prod
+    container_name: ${DB_CONTAINER_PROD}
     build:
       context: .
       dockerfile: Dockerfile.postgres
@@ -16,15 +16,15 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
   backend-service:
-    container_name: backend-prod
+    container_name: ${BACK_CONTAINER_PROD}
     build:
       context: .
       dockerfile: Dockerfile.prod
     image: sheveleffroman/home-library-prod-backend-service:latest
     environment:
-      - HOST=backend-prod
+      - HOST=${BACK_CONTAINER_PROD}
       - PORT=${PORT}
-      - POSTGRES_HOST=postgres-prod
+      - POSTGRES_HOST=${DB_CONTAINER_PROD}
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
