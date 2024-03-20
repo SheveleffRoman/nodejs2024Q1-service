@@ -36,7 +36,7 @@ You can start docker containers in 3 ways:
 run command in terminal
 
 ```
-docker compose --env-file .env -f docker-compose.yml up -d
+docker compose --env-file .env -f docker-compose.hub.yml up -d
 ```
 or download Docker extension for VS CODE and right click on docker-compose.hub.yml file and `Compose Up`
 
@@ -65,6 +65,18 @@ npx prisma migrate dev --name init
 ```
 
 You can open localhost:${PORT} and change app.service.ts file to see how dev mode works
+
+### Start/stop docker containers
+
+```
+docker compose -f docker-compose.${hub/prod/dev}.yml start
+```
+
+```
+docker compose -f docker-compose.${hub/prod/dev}.yml stop
+```
+
+or manage all processes in Docker desktop
 
 
 ## Testing
