@@ -12,11 +12,11 @@ services:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     volumes:
       - postgres-data:/var/lib/postgresql/data
-  app-backend-service:
-    container_name: ${DB_CONTAINER}
+  backend-service:
+    container_name: ${BACK_CONTAINER}
     image: sheveleffroman/home-library-prod-backend-service:latest
     environment:
-      - HOST=${DB_CONTAINER}
+      - HOST=${BACK_CONTAINER}
       - PORT=${PORT}
       - POSTGRES_HOST=${DB_CONTAINER}
       - POSTGRES_PORT=${POSTGRES_PORT}
