@@ -4,6 +4,7 @@
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+- Docker - [Download & Install](https://docs.docker.com/engine/install/)
 
 ## Downloading
 
@@ -14,13 +15,7 @@ git clone https://github.com/SheveleffRoman/nodejs2024Q1-service
 ## Switch branch
 
 ```
-git checkout develop_sprint_1
-```
-
-## Installing NPM modules
-
-```
-npm install
+git checkout develop_sprint_2
 ```
 
 ## ENV
@@ -29,50 +24,53 @@ npm install
 rename .env.example to .env
 ```
 
-## Running application
+## Docker
+
+You can start docker containers in 3 ways:
+- from Docker Hub
+- local prod mode
+- local dev mode
+
+### Docker Hub
+
+run command in terminal
 
 ```
-npm start
+docker compose --env-file .env -f docker-compose.yml up -d
+```
+or right click in vs code on docker-compose.hub.yml file and `Compose Up`
+
+### Prod mode
+
+run command in terminal
+
+```
+docker compose --env-file .env -f docker-compose.prod.yml up -d
+```
+or right click in vs code on docker-compose.prod.yml file and `Compose Up`
+
+### Dev mode
+
+run command in terminal
+
+```
+docker compose --env-file .env -f docker-compose.dev.yml up -d
+```
+or right click in vs code on docker-compose.dev.yml file and `Compose Up`
+
+and then manually type command
+
+```
+npx prisma migrate dev --name init
 ```
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
+You can open localhost:${PORT} and change app.service.ts file to see how dev mode works
+
 
 ## Testing
 
-After application running open new terminal and enter:
-
-To run all tests without authorization
-change script "test" to "jest --testPathIgnorePatterns /auth refresh.e2e.spec.ts --noStackTrace --runInBand"
+After containers running  enter:
 
 ```
 npm run test
-```
-
-To run only one of all test suites
-
-```
-npm run test -- <path to suite>
-```
-
-To run all test with authorization
-
-```
-npm run test:auth
-```
-
-To run only specific test suite with authorization
-
-```
-npm run test:auth -- <path to suite>
-```
-
-### Auto-fix and format
-
-```
-npm run lint
-```
-
-```
-npm run format
 ```
