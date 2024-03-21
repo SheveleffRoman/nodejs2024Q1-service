@@ -44,6 +44,8 @@ You can open localhost:${PORT} and change app.service.ts file to see how dev mod
 
 Also you can run `npx prisma studio` to see GUI DB
 
+If you want to change ports - change .env file variables and re-compose container
+
 Prisma migrate already done, but if something went wrong, you can do this manually by command `npx prisma migrate dev`
 
 ### Prod mode
