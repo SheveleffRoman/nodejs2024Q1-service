@@ -19,7 +19,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    command: sh -c "cd /app/ && npm install && npm run start:dev"
     environment:
       - HOST=${BACK_CONTAINER_DEV}
       - PORT=${PORT}
