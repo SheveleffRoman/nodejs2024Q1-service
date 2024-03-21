@@ -38,7 +38,7 @@ run command in terminal
 ```
 docker compose --env-file .env -f docker-compose.hub.yml up -d
 ```
-or download Docker extension for VS CODE and right click on docker-compose.hub.yml file and `Compose Up`
+or download Docker extension for VS CODE and right click on **docker-compose.hub.yml** file and `Compose Up`
 
 You can open localhost:${PORT} and change app.service.ts file to see how dev mode works.
 
