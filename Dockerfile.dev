@@ -1,9 +1,10 @@
+FROM node:20 as build
+WORKDIR /app
+COPY . .
+RUN npm install
+
 FROM node:20-alpine
 WORKDIR /app
-COPY package*.json ./
-RUN npm i -g @nestjs/cli
-RUN npm install
-COPY . .
-RUN npm run build
+COPY --from=build /app /app
 EXPOSE ${PORT}
-CMD ["node", "dist/main.js"]
+CMD ["npm", "run", "start:dev:with-prisma-migrate"]
