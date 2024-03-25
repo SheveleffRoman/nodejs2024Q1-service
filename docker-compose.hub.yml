@@ -1,0 +1,39 @@
+name: home-library
+services:
+  postgres-service:
+    container_name: ${DB_CONTAINER}
+    image: sheveleffroman/home-library-dev-postgres-service:latest
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    networks:
+      - library-net
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+  backend-service:
+    container_name: ${BACK_CONTAINER}
+    image: sheveleffroman/home-library-dev-backend-service:latest
+    environment:
+      - HOST=${BACK_CONTAINER}
+      - PORT=${PORT}
+      - POSTGRES_HOST=${DB_CONTAINER}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    restart: always
+    networks:
+      - library-net
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - ./:/app
+      - ./node_modules:/app/node_modules
+    depends_on:
+      - postgres-service
+networks:
+  library-net: {}
+volumes:
+  postgres-data: {}

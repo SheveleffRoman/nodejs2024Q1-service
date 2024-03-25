@@ -1,0 +1,42 @@
+name: home-library-prod
+services:
+  postgres-service:
+    container_name: ${DB_CONTAINER_PROD}
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    image: sheveleffroman/home-library-prod-postgres-service:latest
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    networks:
+      - library-net
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+  backend-service:
+    container_name: ${BACK_CONTAINER_PROD}
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    image: sheveleffroman/home-library-prod-backend-service:latest
+    environment:
+      - HOST=${BACK_CONTAINER_PROD}
+      - PORT=${PORT}
+      - POSTGRES_HOST=${DB_CONTAINER_PROD}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    restart: always
+    networks:
+      - library-net
+    ports:
+      - ${PORT}:${PORT}
+    depends_on:
+      - postgres-service
+networks:
+  library-net: { }
+volumes:
+  postgres-data: { }

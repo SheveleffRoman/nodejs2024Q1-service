@@ -1,0 +1,10 @@
+FROM node:20 as build
+WORKDIR /app
+COPY . .
+RUN npm install
+
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=build /app /app
+EXPOSE ${PORT}
+CMD ["npm", "run", "start:dev:with-prisma-migrate"]

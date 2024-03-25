@@ -4,69 +4,98 @@
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+- Docker - [Download & Install](https://docs.docker.com/engine/install/)
 
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone https://github.com/SheveleffRoman/nodejs2024Q1-service
 ```
 
-## Installing NPM modules
+## Switch branch
+
+```
+git checkout develop_sprint_2
+```
+
+## Install dependencies
 
 ```
 npm install
 ```
 
-## Running application
+## ENV
 
 ```
-npm start
+rename .env.example to .env
 ```
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+## Docker
 
-## Testing
+You can start docker containers in 3 ways:
+- **from Docker Hub (Main option according to assignment)**
+- local prod mode (minimal app size without tests and other modules, only app)
+- local dev mode (images equal to hub)
 
-After application running open new terminal and enter:
+### Docker Hub
 
-To run all tests without authorization
+Please make sure you have installed the dependencies. Otherwise Docker will do it, which will take some time!
+
+run command in terminal
+
+```
+docker compose --env-file .env -f docker-compose.hub.yml up -d
+```
+or download Docker extension for VS CODE and right click on **docker-compose.hub.yml** file and `Compose Up`
+
+When you see message in Docker like "Nest application successfully started" you can continue check the assignment.
+
+You can open localhost:${PORT} and change app.service.ts file to see how dev mode works.
+
+Also you can run `npx prisma studio` to see GUI DB
+
+If you want to change ports - change .env file variables, stop and delete current container, change variables and re-compose container
+
+Prisma migrate already done, but if something went wrong, you can do this manually by command `npx prisma migrate dev`
+
+### Testing
+
+After containers running:
 
 ```
 npm run test
 ```
 
-To run only one of all test suites
+### Start/stop docker containers
 
 ```
-npm run test -- <path to suite>
-```
-
-To run all test with authorization
-
-```
-npm run test:auth
-```
-
-To run only specific test suite with authorization
-
-```
-npm run test:auth -- <path to suite>
-```
-
-### Auto-fix and format
-
-```
-npm run lint
+docker compose -f docker-compose.${hub/prod/dev}.yml start
 ```
 
 ```
-npm run format
+docker compose -f docker-compose.${hub/prod/dev}.yml stop
 ```
 
-### Debugging in VSCode
+or manage all processes in Docker desktop
 
-Press <kbd>F5</kbd> to debug.
+## Extra options
 
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+### Local Prod mode
+
+run command in terminal
+
+```
+docker compose --env-file .env -f docker-compose.prod.yml up -d
+```
+or download Docker extension for VS CODE and right click on docker-compose.prod.yml file and `Compose Up`
+
+### Local Dev mode
+
+run command in terminal
+
+```
+docker compose --env-file .env -f docker-compose.dev.yml up -d
+```
+or download Docker extension for VS CODE and right click on docker-compose.dev.yml file and `Compose Up`
+
+You can open localhost:${PORT} and change app.service.ts file to see how dev mode works
