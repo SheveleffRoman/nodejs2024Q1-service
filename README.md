@@ -58,7 +58,7 @@ If you want to change ports - change .env file variables, stop and delete curren
 
 Prisma migrate already done, but if something went wrong, you can do this manually by command `npx prisma migrate dev`
 
-## Testing
+### Testing
 
 After containers running:
 
@@ -66,7 +66,7 @@ After containers running:
 npm run test
 ```
 
-## Start/stop docker containers
+### Start/stop docker containers
 
 ```
 docker compose -f docker-compose.${hub/prod/dev}.yml start
@@ -78,9 +78,9 @@ docker compose -f docker-compose.${hub/prod/dev}.yml stop
 
 or manage all processes in Docker desktop
 
-### Extra options
+## Extra options
 
-## Local Prod mode
+### Local Prod mode
 
 run command in terminal
 
@@ -89,7 +89,7 @@ docker compose --env-file .env -f docker-compose.prod.yml up -d
 ```
 or download Docker extension for VS CODE and right click on docker-compose.prod.yml file and `Compose Up`
 
-## Local Dev mode
+### Local Dev mode
 
 run command in terminal
 
