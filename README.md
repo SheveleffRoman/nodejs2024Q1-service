@@ -39,6 +39,8 @@ You can start docker containers in 3 ways:
 
 ### Docker Hub
 
+Please make sure you have installed the dependencies. Otherwise Docker will do it, which will take some time
+
 run command in terminal
 
 ```
