@@ -18,6 +18,12 @@ git clone https://github.com/SheveleffRoman/nodejs2024Q1-service
 git checkout develop_sprint_2
 ```
 
+## Install dependencies
+
+```
+npm install
+```
+
 ## ENV
 
 ```
